@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from './config.service';
 import { Response } from 'express';
+import { Config } from './config.entity';
 @Controller('config/')
 export class ConfigController {
   configService: ConfigService;
@@ -21,15 +22,14 @@ export class ConfigController {
   async getConfig(@Res() res: Response, @Param('name') name: string) {
     const config = await this.configService.getConfig(name);
     if (config) {
-      res.status(HttpStatus.OK); // Not really need response object here, but it is a good example for mocking resposne object in unit tests
-      return config;
+      return res.status(HttpStatus.OK).json(config); // Not really need response object here, but it is a good example for mocking resposne object in unit tests
     } else {
       throw new BadRequestException('Config not found');
     }
   }
 
   @Post(':name')
-  async setConfig(@Param('name') name: string, @Body() body) {
+  async setConfig(@Param('name') name: string, @Body() body: Config) {
     await this.configService.setConfig(name, body);
   }
 }

@@ -1,25 +1,34 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, Logger } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Config } from './config.entity';
 
 @Injectable()
 export class ConfigService {
+
+  private readonly logger = new Logger(ConfigService.name);
+
   constructor(
     @Inject('CONFIG_REPOSITORY')
     private configRepository: Repository<Config>,
   ) {}
 
   async getConfig(name: string): Promise<Config | null> {
-    return await this.configRepository.findOneBy({ name: name });
+    this.logger.debug(`get config for name: ${name}`)
+    const config = await this.configRepository.findOneBy({ name: name });
+    this.logger.debug(`got config: ${JSON.stringify(config)} for name: ${name}`)
+    return config
   }
 
-  async setConfig(name: string, value: JSON) {
-    let config = await this.getConfig(name);
-    if (config) {
-      config.value = value;
+  async setConfig(name: string, config: Config) {
+    let config_db = await this.getConfig(name);
+    if (config_db) {
+      this.logger.debug(`config already exist for name: ${name}, will be updated`)
+      config_db.value = config.value;
     } else {
-      config = new Config((name = name), (value = value));
+      this.logger.debug(`config not exist for name: ${name}, will be created`)
+      config_db = config
     }
-    this.configRepository.save(config);
+    this.logger.debug(`saving config for name: ${name}`)
+    this.configRepository.save(config_db);
   }
 }
