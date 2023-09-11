@@ -37,9 +37,11 @@ describe('ConfigController', () => {
       configService.getConfig.mockResolvedValue(expected_config);
       const response = httpMocks.createResponse();
 
+      
+
       const result = await configController.getConfig(response, config_name);
 
-      expect(result).toBe(expected_config);
+      expect(JSON.stringify(result)).toBe(JSON.stringify(httpMocks.createResponse().status(200).json(expected_config)));
       expect(configService.getConfig).toHaveBeenCalled();
     });
   });

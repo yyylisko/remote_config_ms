@@ -23,10 +23,14 @@ describe('AppController (e2e)', () => {
     });
   });
 
-  it('/ (POST and get) 200', () => {
+  it('/ (POST and get) 200', async () => {
     const config_value = { "name": "android", "value":"{}"}
     const server = app.getHttpServer()
-    request(server).post('/config/android').send(config_value).expect(201);
-    return request(server).get('/config/android').expect(200).expect(config_value);
+    const result = await request(server).post('/config/android').send(config_value);
+    expect(result.status).toBe(201)
+    const getResult = await request(server).get('/config/android');
+    expect(getResult.status).toBe(200);
+    config_value["id"] = 1
+    expect(getResult.body).toEqual(config_value)
   });
 });
