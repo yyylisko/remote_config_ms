@@ -1,4 +1,10 @@
+import * as dotenv from 'dotenv'
 import { DataSource, DataSourceOptions } from "typeorm";
+
+const ENV = process.env.NODE_ENV;
+
+// Load env file
+dotenv.config({ path: __dirname + `/../../.env.${ENV}` });
 
 export const database_config = {
     type: 'mysql',

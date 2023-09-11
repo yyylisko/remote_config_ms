@@ -5,7 +5,6 @@ import { AppModule } from '../src/app.module';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
-
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
@@ -15,15 +14,21 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('/ (GET) 404 config not found', () => {
-    return request(app.getHttpServer()).get('/config/unkown').expect(400).expect({
+  afterAll(async () => {
+    await app.close()
+  })
+
+  it('/ (GET) 404 config not found', async () => {
+    const result = await request(app.getHttpServer()).get('/config/unkown')
+    expect(result.status).toBe(400)
+    expect(result.body).toEqual({
       message: 'Config not found',
       error: 'Bad Request',
       statusCode: 400,
     });
   });
 
-  it('/ (POST and get) 200', async () => {
+  it('/ (POST and get) 200', async () =>  {
     const config_value = { "name": "android", "value":"{}"}
     const server = app.getHttpServer()
     const result = await request(server).post('/config/android').send(config_value);
