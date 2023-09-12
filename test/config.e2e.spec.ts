@@ -2,19 +2,23 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
+import { DataSource } from 'typeorm';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
+  let data_source: DataSource
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    data_source = moduleFixture.get('DATA_SOURCE');
     await app.init();
   });
 
   afterAll(async () => {
+    await data_source.destroy();
     await app.close()
   })
 
