@@ -11,3 +11,4 @@ jobs:
         with:
           compose-file: './docker-compose-test.yml'
           down-flags: '--volumes'
+          test-command: 'sh -c "./wait-for-mysql.sh && ./docker-entrypoint-test.sh"'
