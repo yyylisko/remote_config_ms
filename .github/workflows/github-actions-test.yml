@@ -1,0 +1,13 @@
+name: GitHub Actions Test
+run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+on: [push]
+jobs:
+  run-docker-compose:
+    runs-on: ubuntu-latest
+    steps:
+      # need checkout before using docker-compose-action
+      - uses: actions/checkout@v3
+      - uses: adambirds/docker-compose-action@v1.3.0
+        with:
+          compose-file: './docker-compose-test.yml'
+          down-flags: '--volumes'
